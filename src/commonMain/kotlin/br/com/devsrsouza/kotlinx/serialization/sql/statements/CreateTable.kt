@@ -26,6 +26,9 @@ fun createTable(serializer: KSerializer<*>): String {
         if(isPrimaryKey && isUnique)
             throw UnsupportedOperation("You can not have a property that is PRIMARY KEY and UNIQUE.")
 
+        if(isPrimaryKey && isNullable)
+            throw UnsupportedOperation("You can not have a primary key nullable.")
+
         if (isPrimaryKey && hasPrimaryKey)
             throw UnsupportedOperation("You can not have two properties with PRIMARY KEY.")
 

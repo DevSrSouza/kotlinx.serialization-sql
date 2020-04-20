@@ -2,10 +2,11 @@
 
 Generate SQL queries for Serializable data classes from [Kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization/).
 
-## Dialet supported
+## Dialect supported
 - MySQL
 
 ## Queries supported
 - Create Table
 - Insert
 - Update
+- Select
