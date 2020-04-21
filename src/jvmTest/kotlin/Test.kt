@@ -1,6 +1,9 @@
 import br.com.devsrsouza.kotlinx.serialization.sql.AutoIncrement
 import br.com.devsrsouza.kotlinx.serialization.sql.PrimaryKey
 import br.com.devsrsouza.kotlinx.serialization.sql.Unique
+import br.com.devsrsouza.kotlinx.serialization.sql.WhereOperator.eq
+import br.com.devsrsouza.kotlinx.serialization.sql.WhereOperator.greater
+import br.com.devsrsouza.kotlinx.serialization.sql.entity
 import br.com.devsrsouza.kotlinx.serialization.sql.statements.*
 import kotlinx.serialization.Serializable
 
@@ -33,25 +36,31 @@ fun main() {
         )
     )
 
-    val id = Where(Player::id, 5)
     val select = selectQuery(
         Player.serializer(),
-        where = listOf(id)
+        where = listOf(Player::id.entity.where(eq, 5))
     )
-    println(
-        select.first
+    println(select.first)
+
+    val select2 = selectQuery(
+        Player.serializer(),
+        where = listOf(Player::id.entity.where(greater, 5))
     )
 
-    val dummyResult = mapOf(
-        "id" to 5,
-        "uuid" to "0000-00-0000-00-0000",
-        "nickname" to "Joao",
-        "group" to null
+    println(select2.first)
+
+    val dummyResult = listOf(
+        mapOf(
+            "id" to 5,
+            "uuid" to "0000-00-0000-00-0000",
+            "nickname" to "Joao",
+            "group" to null
+        )
     )
 
     println(
         select.second(
-            listOf(dummyResult)
+            dummyResult
         )
     )
 

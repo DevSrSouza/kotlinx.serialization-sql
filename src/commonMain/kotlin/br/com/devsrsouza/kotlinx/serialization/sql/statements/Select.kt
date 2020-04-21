@@ -1,20 +1,12 @@
 package br.com.devsrsouza.kotlinx.serialization.sql.statements
 
+import br.com.devsrsouza.kotlinx.serialization.sql.Where
 import br.com.devsrsouza.kotlinx.serialization.sql.internal.isStringType
 import br.com.devsrsouza.kotlinx.serialization.sql.internal.nameWithEscape
 import br.com.devsrsouza.kotlinx.serialization.sql.internal.requirePrimitiveKind
 import br.com.devsrsouza.kotlinx.serialization.sql.internal.simpleSerialName
 import kotlinx.serialization.*
 import kotlinx.serialization.internal.NamedValueDecoder
-import kotlinx.serialization.internal.NamedValueEncoder
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonPrimitive
-import kotlin.reflect.KProperty1
-
-data class Where<T, V>(
-    val property: KProperty1<T, V>,
-    val value: V
-)
 
 fun <T> selectQuery(
     serializer: KSerializer<T>,
@@ -25,17 +17,17 @@ fun <T> selectQuery(
     var queryBuilder = "SELECT * FROM "
     queryBuilder += desc.simpleSerialName
 
-    val whereQuery = where.map { it.property.name to it.value }
-        .joinToString { (elementName, value) ->
+    val whereQuery = where.map { it.property.name to it }
+        .joinToString { (elementName, where) ->
         val elementDesc = desc.getElementDescriptor(desc.getElementIndex(elementName))
 
         val kind = elementDesc.requirePrimitiveKind()
 
-        val value = value.let {
+        val value = where.value.let {
             if(isStringType(kind)) "'$it'" else it
         }
 
-        "${nameWithEscape(elementName)}=$value"
+        "${nameWithEscape(elementName)}${where.operator.operator}$value"
     }
 
     if(where.isNotEmpty()) {
